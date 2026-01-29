@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 </head>
 
 <body class="dark-theme">
@@ -77,10 +78,11 @@
             <header class="top-bar">
                 <h1 id="current-module-title">Kontrol Paneli</h1>
                 <div class="user-actions">
-                    <button class="btn-icon"><i class="fas fa-bell"></i></button>
-                    <button class="btn-icon"><i class="fas fa-cog"></i></button>
+                    <button class="btn-icon" aria-label="Bildirimler"><i class="fas fa-bell"></i></button>
+                    <button class="btn-icon" aria-label="Ayarlar"><i class="fas fa-cog"></i></button>
                     <div class="user-profile">
-                        <img src="https://ui-avatars.com/api/?name=Quantum&background=00f2ff&color=000" alt="User">
+                        <img src="https://ui-avatars.com/api/?name=Quantum&background=00f2ff&color=000"
+                            alt="Quantum Profil Fotoğrafı">
                     </div>
                 </div>
             </header>
@@ -94,11 +96,19 @@
         <div class="ai-assistant-wrapper">
             <div class="ai-chat-window glass" id="floating-chat">
                 <div class="chat-header">
-                    <h3><i class="fas fa-robot"></i> Quantum Assistant</h3>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-robot"></i>
+                        <div>
+                            <h3 style="margin: 0; font-size: 1rem;">Quantum Assistant</h3>
+                            <span style="font-size: 0.65rem; color: var(--accent); letter-spacing: 1px;"><i
+                                    class="fas fa-shield-alt"></i> TOTAL ACCESS MODE</span>
+                        </div>
+                    </div>
                     <button class="btn-icon" onclick="toggleAIChat()"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="chat-messages" id="chat-messages">
-                    <div class="message ai-message">Yeni Quantum Neon arayüzüne hoş geldiniz! Google Ekosistemi artık kendi özel başlığına sahip. Size nasıl yardımcı olabilirim?</div>
+                    <div class="message ai-message">Efendim, Superuser yetkileriyle sisteme giriş yapıldı. Tüm dosya ve
+                        fonksiyonlara erişimim var. Ne yapmamı istersiniz?</div>
                 </div>
                 <div class="chat-input-area">
                     <input type="text" id="ai-input" placeholder="Bir komut verin...">

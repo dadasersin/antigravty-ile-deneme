@@ -104,6 +104,7 @@ function renderModule(moduleName, container) {
                         <div class="activity-list">
                             <div class="activity-item"><span class="time">Şimdi</span><span class="desc">Arayüz Quantum Neon formatına güncellendi.</span></div>
                             <div class="activity-item"><span class="time">10 dk</span><span class="desc">Google AI Studio araçları kategorize edildi.</span></div>
+                            <div class="activity-item"><span class="time">Az önce</span><span class="desc">Sistem çekirdeği optimize edildi.</span></div>
                         </div>
                     </div>
                 </div>
@@ -167,16 +168,18 @@ function renderModule(moduleName, container) {
                             <span class="badge success">Aktif</span>
                          </div>
                          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            ${["SMA", "EMA", "RSI", "MACD"].map(ind => `<div><input type="checkbox"> ${ind} <i class="fas fa-cog"></i></div>`).join('')}
+                            ${["SMA", "EMA", "RSI", "MACD", "VWAP", "TEMA"].map(ind => `<div><input type="checkbox"> ${ind} <i class="fas fa-cog"></i></div>`).join('')}
                          </div>
                          <div class="terminal-container glass" style="margin-top: 2rem; background: #000 !important; padding: 1rem; height: 150px; overflow-y: auto;">
                             <div id="crypto-logs" style="font-family: monospace; font-size: 0.8rem; color: #00f2ff;">
-                                <div>[10:24:01] Quantum ağları senkronize edildi...</div>
+                                <div>[${new Date().toLocaleTimeString()}] Quantum ağları senkronize edildi...</div>
+                                <div>[${new Date().toLocaleTimeString()}] Algoritmik veri setleri yüklendi.</div>
                             </div>
                          </div>
                     </div>
                     <div class="glass card">
                         <h3>Kontrol Paneli</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">Stratejinizi seçin ve motoru başlatın.</p>
                         <button class="btn btn-primary btn-block" onclick="startBotSimulation()">Stratejiyi Başlat</button>
                     </div>
                 </div>
@@ -212,17 +215,33 @@ function renderModule(moduleName, container) {
                         <h2>Quantum Command</h2>
                         <p>Sistem arayüzü ve Google ekosistemi üzerinde tam kontrole sahibim.</p>
                     </div>
-                    <div class="chat-messages" id="module-chat-messages" style="flex: 1; border-top: 1px solid var(--glass-border); padding: 1.5rem;">
+                    <div class="chat-messages" id="module-chat-messages" style="flex: 1; border-top: 1px solid var(--glass-border); padding: 1.5rem; overflow-y: auto;">
                          <div class="message ai-message">Quantum Neon sistemine geçiş yapıldı. Komutlarınızı bekliyorum.</div>
                     </div>
                 </div>
             `;
             break;
         case 'media':
-            html = `<div class="glass card" style="padding: 3rem; text-align: center;"><i class="fas fa-icons" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i><h2>Medya İşleme</h2><p>Dosyalarınızı buraya bırakın.</p></div>`;
+            html = `
+                <div class="glass card" style="padding: 3rem; text-align: center;">
+                    <i class="fas fa-icons" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h2>Medya İşleme</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">Görsel, video ve ses dosyalarınızı AI ile optimize edin.</p>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                        <div class="glass" style="padding: 1.5rem; border-radius: 15px;"><i class="fas fa-image"></i><br>Görsel</div>
+                        <div class="glass" style="padding: 1.5rem; border-radius: 15px;"><i class="fas fa-video"></i><br>Video</div>
+                        <div class="glass" style="padding: 1.5rem; border-radius: 15px;"><i class="fas fa-microphone"></i><br>Ses</div>
+                    </div>
+                </div>`;
             break;
         case 'site-designer':
-            html = `<div class="glass card" style="padding: 3rem; text-align: center;"><i class="fas fa-paint-brush" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i><h2>Site Tasarımı</h2><p>AI destekli tasarım motoru aktif.</p></div>`;
+            html = `
+                <div class="glass card" style="padding: 3rem; text-align: center;">
+                    <i class="fas fa-paint-brush" style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;"></i>
+                    <h2>Site Tasarımı</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">AI destekli tasarım motoru ile anında modern web siteleri oluşturun.</p>
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Yeni Proje Başlat</button>
+                </div>`;
             break;
     }
     container.innerHTML = html;
@@ -261,7 +280,7 @@ async function sendMessage() {
 
     showTypingIndicator();
     const response = await processAICommand(text);
-    
+
     setTimeout(() => {
         removeTypingIndicator();
         addChatMessage(response, 'ai');
@@ -270,22 +289,53 @@ async function sendMessage() {
 
 async function processAICommand(text) {
     const lowerText = text.toLowerCase();
-    if (lowerText.includes('tema') || lowerText.includes('renk') || lowerText.includes('neon')) {
-        document.body.className = 'dark-theme';
-        let color = "Quantum Neon";
-        if (lowerText.includes('kırmızı')) { document.body.classList.add('theme-red'); color = "Plazma Kırmızısı"; }
-        else if (lowerText.includes('yeşil')) { document.body.classList.add('theme-green'); color = "Siber Yeşil"; }
-        else if (lowerText.includes('altın') || lowerText.includes('sarı')) { document.body.classList.add('theme-gold'); color = "Elektro Altın"; }
-        return `Sistem spektrumu ${color} olarak yeniden kalibre edildi.`;
+
+    // Virtual Execution Simulation
+    const showExecution = async (steps) => {
+        for (const step of steps) {
+            addChatMessage(`> [Sistem]: ${step}`, 'ai');
+            await new Promise(r => setTimeout(r, 600));
+        }
+    };
+
+    // Advanced "Everything" Access Simulation
+    if (lowerText.includes('değiştir') || lowerText.includes('ekle') || lowerText.includes('oluştur') || lowerText.includes('yap')) {
+        await showExecution([
+            "Komut Quantum çekirdeğine iletildi.",
+            "Dosya sistemi yetkilendirmesi kontrol ediliyor...",
+            "Süper kullanıcı (Root) erişimi onaylandı.",
+            "DOM ağacı manipüle ediliyor...",
+            "Değişiklikler sisteme başarıyla uygulandı."
+        ]);
+
+        if (lowerText.includes('menü') || lowerText.includes('sayfa')) {
+            const nav = document.querySelector('.sidebar-nav');
+            const newBtn = document.createElement('button');
+            newBtn.className = 'nav-item';
+            newBtn.innerHTML = '<i class="fas fa-plus-circle"></i> <span>Yeni Modül</span>';
+            nav.appendChild(newBtn);
+            return "İstediğiniz yeni modül yan menüye eklendi ve tüm yetkiler tanımlandı.";
+        }
+
+        if (lowerText.includes('renk') || lowerText.includes('arka plan')) {
+            document.body.style.filter = 'hue-rotate(90deg)';
+            return "Sistem görsel spektrumu anlık olarak değiştirildi. Tüm arayüz yeni konfigürasyonda.";
+        }
+
+        return "Quantum çekirdeği isteğinizi yerine getirdi. Dosya sisteminde ve arayüzde gerekli değişiklikler yapıldı.";
     }
-    if (lowerText.includes('google') || lowerText.includes('uygulama') || lowerText.includes('ekosistem')) {
-        switchModule('google-apps');
-        return "Google Ekosistemi paneline yönlendiriliyorsunuz.";
+
+    // Knowledge / Universal Access
+    if (lowerText.includes('kimsin') || lowerText.includes('yetkin')) {
+        return "Ben Quantum AI platformunun Süper Kullanıcı asistanıyım. Bu sistemdeki tüm dosyalara, modüllere ve çekirdek ayarlara erişim iznim var. İstediğiniz her şeyi yapabilirim.";
     }
-    if (lowerText.includes('ara') || lowerText.includes('nedir')) {
-        return "Kuantum ağları taranıyor... Veri setleri senkronize edildi.";
+
+    // Fallback to enhanced conversation
+    if (lowerText.includes('merhaba') || lowerText.includes('selam')) {
+        return "Merhaba Efendim. Tam yetkili Quantum asistanı hizmetinizde. Ne yapmamı istersiniz?";
     }
-    return "Komut Quantum çekirdeği tarafından işlendi. Sistem hazır.";
+
+    return `Anlaşıldı. Komut "Süper Kullanıcı" modunda işlendi. "${text}" isteğiniz doğrultusunda sistem optimize edildi.`;
 }
 
 function addChatMessage(text, side) {
@@ -296,7 +346,11 @@ function addChatMessage(text, side) {
         msg.className = `message ${side}-message`;
         msg.textContent = text;
         container.appendChild(msg);
-        container.scrollTop = container.scrollHeight;
+
+        // Ensure scrolling to bottom
+        setTimeout(() => {
+            container.scrollTop = container.scrollHeight;
+        }, 50);
     });
 }
 
@@ -334,7 +388,8 @@ function clearCanvas() {
 
 function removeComponent(idx) {
     state.appComponents.splice(idx, 1);
-    addComponent();
+    const canvas = document.getElementById('builder-canvas');
+    if (canvas) canvas.innerHTML = renderCanvas() || '<p style="color: var(--text-secondary); text-align: center;">Bileşenleri buraya ekleyin</p>';
 }
 
 function renderCanvas() {
@@ -360,7 +415,7 @@ window.sendMessage = sendMessage;
 window.toggleModal = () => document.getElementById('request-modal').classList.toggle('hidden');
 window.submitRequest = () => {
     const topic = document.querySelector('#request-form input').value;
-    state.requests.unshift({ id: '#' + Math.floor(Math.random()*9000+1000), topic, date: 'Şimdi', status: 'warning', statusText: 'İşleniyor' });
+    state.requests.unshift({ id: '#' + Math.floor(Math.random() * 9000 + 1000), topic, date: 'Şimdi', status: 'warning', statusText: 'İşleniyor' });
     window.toggleModal();
     if (state.currentModule === 'requests') switchModule('requests');
 };
